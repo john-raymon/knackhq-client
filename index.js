@@ -32,7 +32,8 @@ class ViewBasedClient {
           try {
             body = JSON.parse(document_text)
           } catch (error) {
-            body = JSON.stringify(document_text)
+            // if we can't parse it chances are it's not JSON, could be plain text 'Invalid API Token' when auth token missing look at test
+            body = document_text
           }
           resolve({ statusCode: response.statusCode, body });
         });
