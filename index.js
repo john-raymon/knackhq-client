@@ -65,48 +65,46 @@ class ViewBasedClient {
   }
 
   auth(email, password) {
-    return new Promise((resolve, reject) => {
-      if (!email && !password) {
-        return reject(Error('You must provide an email and password'));
+    if (!email && !password) {
+      return Error('You must provide an email and password');
+    }
+
+    if(!this.app_id) {
+      return Error('The application ID for your Knack app is required to make this request')
+    }
+
+    const options = {
+      url: `applications/${this.app_id}/session`,
+      method: 'POST',
+      data: {
+        email,
+        password
       }
+    }
 
-      if(!this.app_id) {
-        return reject(Error('The application ID for your Knack app is required to make this request'))
-      }
+    // make request
+    return this.request(options).then((res) => {
 
-      const options = {
-        url: `applications/${this.app_id}/session`,
-        method: 'POST',
-        data: {
-          email,
-          password
-        }
-      }
+      if (res.statusCode === 200) {
+        this.setToken(res.body.session.user.token);
 
-      // make request
-      this.request(options).then((res) => {
-
-        if (res.statusCode === 200) {
-          this.setToken(res.body.session.user.token);
-
-          resolve( {
-            isAuth: true,
-            token: res.body.session.user.token,
-            response: res
-          })
-        }
-
-        reject( {
-          isAuth: false,
+        return {
+          isAuth: true,
+          token: res.body.session.user.token,
           response: res
-        })
-      }).catch((error) => {
+        }
+      }
 
-        reject( {
-          isAuth: false,
-          response: error
-        })
-      })
+      return {
+        isAuth: false,
+        response: res
+      }
+    }).catch((error) => {
+
+      return {
+        isAuth: false,
+        response: error
+      };
     })
   }
 
