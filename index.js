@@ -109,7 +109,6 @@ class ViewBasedClient {
   }
 
   isAuthenticated(token) {
-
     if (!this.app_id) return Error('No application ID found')
     if (!this.auth_pair) return Error('No auth pair given during configuration, refer to docs for Creating Knack AUTH_ENDPOINT')
 
@@ -132,6 +131,27 @@ class ViewBasedClient {
         error
       }
     })
+  }
+
+  getAllRecords(scene,view) {
+    if (scene && view) {
+      const options = {
+        url: `pages/scene_${scene}/views/view_${view}/records`,
+        method: 'GET'
+      }
+
+      return this.request(options).then((res) => {
+        if (res.statusCode === 200) {
+          return { response: res }
+        } else if (res.statusCode === 401) {
+          return { error: Error('You are not authenticated'), response: res }
+        } else if (res.statusCode === 403 ) {
+          return { error: Error('You do not have proper access to this resource'), response: res }
+        }
+        return { error: Error('There seems to be an problem trying to connect to Knack\'s server'), response: res }
+      }).catch((error) => ({ error }))
+    }
+    return Error('You must provide a scene, and view number of the table containing the records you are trying to retrieve')
   }
 
   setToken(token) {
