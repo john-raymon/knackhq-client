@@ -41,6 +41,14 @@ describe('ViewBasedClient class', function () {
     }).then(done, done);
   })
 
+  it('Testing method isAuthenticated() with a valid token in env', (done) => {
+    const knackClient = new ViewBasedClient({app_id, auth_scene: process.env.AUTH_SCENE, auth_view: process.env.AUTH_VIEW, token: process.env.TOKEN});
+    console.log('THE TOKEN', process.env.TOKEN)
+    knackClient.isAuthenticated().then((res) => {
+        console.log('~~~~ The Response ~~~~', res)
+        chai.expect(res.isAuth).to.be.equal(true);
+    }).then(done, done);
+  })
 
   it('Testing method isAuthenticated() should fail without a user having been authenticated on the instance of the client ', (done) => {
     const knackClient = new ViewBasedClient({app_id, auth_scene: process.env.AUTH_SCENE, auth_view: process.env.AUTH_VIEW});

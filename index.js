@@ -50,7 +50,7 @@ class ViewBasedClient {
     });
   }
 
-  request(options) {
+  request(options, token = this.token) {
     let request_options =  {
       path: `/v1/${options.url}`,
       host: 'api.knack.com',
@@ -59,7 +59,7 @@ class ViewBasedClient {
       data: options.data
     }
 
-    if (this.token) request_options.headers['Authorization'] = this.token;
+    if (token) request_options.headers['Authorization'] = token;
 
     return this._request_async(request_options).then(res => res, error => error)
   }
@@ -108,7 +108,7 @@ class ViewBasedClient {
     })
   }
 
-  isAuthenticated(token = this.token) {
+  isAuthenticated(token) {
 
     if (!this.app_id) return Error('No application ID found')
     if (!this.auth_pair) return Error('No auth pair given during configuration, refer to docs for Creating Knack AUTH_ENDPOINT')
@@ -118,7 +118,7 @@ class ViewBasedClient {
       method: 'GET'
     }
 
-    return this.request(options).then((res) => {
+    return this.request(options, token).then((res) => {
 
       if (res.statusCode === 200)  {
         return { isAuth: true, response: res };
