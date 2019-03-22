@@ -133,10 +133,12 @@ class ViewBasedClient {
     })
   }
 
-  getAllRecords(scene,view) {
+  getAllRecords(scene, view, filters, page, rows_per_page) {
     if (scene && view) {
       const options = {
-        url: `pages/scene_${scene}/views/view_${view}/records`,
+        url: `pages/scene_${scene}/views/view_${view}/records` + ((filters) ? '?filters=' + encodeURIComponent(JSON.stringify(filters)) : '') +
+              ((rows_per_page) ? ((filters) ? '&' : '?') + 'rows_per_page=' + rows_per_page : '') +
+              ((page) ? ((filters || rows_per_page) ? '&' : '?') + 'page=' + page : ''),
         method: 'GET'
       }
 

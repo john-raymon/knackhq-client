@@ -58,9 +58,9 @@ describe('ViewBasedClient class', function () {
     }).then(done, done);
   })
 
-  it('Testing method getAllRecords(), should retreive all records in table in view with scene_445 and view_839', (done) => {
+  it('Testing method getAllRecords(), should retreive all records in table in view with scene_445 and view_839, along with a rows_per_page argument', (done) => {
     const knackClient = new ViewBasedClient({app_id, auth_scene: process.env.AUTH_SCENE, auth_view: process.env.AUTH_VIEW, token: process.env.TOKEN});
-    knackClient.getAllRecords("445", "839").then((res) => {
+    knackClient.getAllRecords("445", "839", null, null, "1000").then((res) => {
       console.log('the response looks like', res)
       assert(res.response.statusCode === 200)
     }).then(done, done)
